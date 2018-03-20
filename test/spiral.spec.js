@@ -1,100 +1,89 @@
 /**
  * Created by itersh on 19.03.2018.
  */
-const {w} = require('../index')
+const {generateNextDirection, untwist} = require('../spiral')
   , {expect} = require('chai');
 
-describe('Check w', function() {
-  it('0,0', function() {
-
-    const expectRes = 0;
-    const res = w(0, 0);
-
-    expect(res).to.equal(expectRes);
+describe('Check direction generator', function() {
+  it('Proper sequence', function() {
+    const generator = generateNextDirection();
+    let steps = 7;
+    let res = [];
+    let expectRes = [1,0,-1,-0,1,0,-1];
+    while (steps){
+      steps--;
+      res.push(generator.next().value)
+    }
+    expect(res).to.deep.equal(expectRes);
   });
-  it('1,0', function() {
+});
 
-    const expectRes = 0.5;
-    const res = w(1, 0);
+describe('Check untwist', function() {
+  it('5x5', function() {
+    const src = [
+      [11,12,13,14,15],
+      [21,22,23,24,25],
+      [31,32,33,34,35],
+      [41,42,43,44,45],
+      [51,52,53,54,55]
+    ];
 
-    expect(res).to.equal(expectRes);
-  });
-  it('1,1', function() {
+    const expectRes = [33,32,42,43,44,34,24,23,22,21,31,41,51,52,53,54,55,45,35,25,15,14,13,12,11];
+    const res = untwist(src);
 
-    const expectRes = 0.5;
-    const res = w(1, 1);
-
-    expect(res).to.equal(expectRes);
-  });
-  it( '2,0', function() {
-
-    const expectRes = 0.75;
-    const res = w(2, 0);
-
-    expect(res).to.equal(expectRes);
-  });
-  it('2,1', function() {
-
-    const expectRes = 1.5;
-    const res = w(2, 1);
-
-    expect(res).to.equal(expectRes);
+    expect(res).to.deep.equal(expectRes);
   });
 
-  it('2,2', function() {
+  it('3x3', function() {
+    const src = [
+      [11,12,13],
+      [21,22,23],
+      [31,32,33]
+    ];
 
-    const expectRes = 0.75;
-    const res = w(2, 2);
+    const expectRes = [22,21,31,32,33,23,13,12,11];
+    const res = untwist(src);
 
-    expect(res).to.equal(expectRes);
+    expect(res).to.deep.equal(expectRes);
   });
 
-  it('3,0', function() {
+  it('3x3 (base)', function() {
+    const src = [
+      [1,2,3],
+      [4,5,6],
+      [7,8,9]
+    ];
 
-    const expectRes = 0.875;
-    const res = w(3, 0);
+    const expectRes = [5, 4, 7, 8, 9, 6, 3, 2, 1];
+    const res = untwist(src);
 
-    expect(res).to.equal(expectRes);
+    expect(res).to.deep.equal(expectRes);
   });
 
-  it('3,1', function() {
+  it('1x1', function() {
+    const src = [
+      [11]
+    ];
 
-    const expectRes = 2.125;
-    const res = w(3, 1);
+    const expectRes = [11];
+    const res = untwist(src);
 
-    expect(res).to.equal(expectRes);
+    expect(res).to.deep.equal(expectRes);
   });
 
-  it('3,2', function() {
+  it('Empty src', function() {
+    const src = [];
 
-    const expectRes = 2.125;
-    const res = w(3, 2);
-
-    expect(res).to.equal(expectRes);
+    expect(function(){
+      untwist(src);
+    }).to.throw('Bad params');
   });
 
-  it('3,3', function() {
+  it('Wrong type of src', function() {
+    const src = [];
 
-    const expectRes = 0.875;
-    const res = w(3, 3);
-
-    expect(res).to.equal(expectRes);
-  });
-
-  it('322,156', function() {
-
-    const expectRes = 306.48749781747574;
-    const res = w(322, 156);
-
-    expect(res).to.equal(expectRes);
-  });
-
-  it('1322, 556', function() {
-
-    const expectRes = 1112.9999999567847;
-    console.time('1322, 556');
-    const res = w(1322, 556);
-    console.timeEnd('1322, 556')
-    expect(res).to.equal(expectRes);
+    expect(function(){
+      untwist(src);
+    }).to.throw('Bad params');
   });
 });
